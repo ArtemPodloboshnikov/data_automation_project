@@ -366,7 +366,7 @@ class DataCleaner:
         """Преобразование строк дат в datetime"""
         for col in columns:
             if col in self.df.columns:
-                self.df[col] = pd.to_datetime(self.df[col], format=date_format, errors='coerce')
+                self.df[col] = pd.to_datetime(self.df[col], format='mixed', errors='coerce')
                 self.cleaning_log.append(f"Конвертация '{col}' в datetime")
 
         return self.df
@@ -762,7 +762,7 @@ class DataPipeline:
         self.cleaner.handle_missing_values(strategy='median')
         self.cleaner.remove_duplicates()
         self.cleaner.handle_outliers(strategy='cap')
-        self.cleaner.convert_dates(self.df.select_dtypes(include=['object']).columns.tolist())
+        self.cleaner.convert_dates(self.df.select_dtypes(include=['object', 'string']).columns.tolist())
         self.df = self.cleaner.run_full_cleaning()
 
         # 4. Анализ
